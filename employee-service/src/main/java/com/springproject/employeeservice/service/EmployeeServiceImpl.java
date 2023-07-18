@@ -20,7 +20,8 @@ import java.util.UUID;
 @AllArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService{
 //    private RestTemplate restTemplate;
-    private WebClient webClient;
+//    private WebClient webClient;
+    private APIClient apiClient;
     private EmployeeRepository employeeRepository;
     @Override
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
@@ -36,9 +37,10 @@ public class EmployeeServiceImpl implements EmployeeService{
         EmployeeDto employeeDto=AutoEmployeeMapper.MAPPER.mapToDto(employee);
 //        ResponseEntity<DepartmentDto> responseEntity=restTemplate.getForEntity("http://localhost:8080/api/departments/code/"+employee.getDepartmentCode(), DepartmentDto.class);
 //        DepartmentDto departmentDto=responseEntity.getBody();
-          DepartmentDto departmentDto=webClient.get()
-                           .uri("http://localhost:8080/api/departments/code/"+employee.getDepartmentCode())
-                           .retrieve().bodyToMono(DepartmentDto.class).block();
+//          DepartmentDto departmentDto=webClient.get()
+//                           .uri("http://localhost:8080/api/departments/code/"+employee.getDepartmentCode())
+//                           .retrieve().bodyToMono(DepartmentDto.class).block();
+        DepartmentDto departmentDto=apiClient.getDepartmentByCode(employee.getDepartmentCode());
         APIResponseDto apiResponseDto=new APIResponseDto(departmentDto,employeeDto);
         return apiResponseDto;
 
