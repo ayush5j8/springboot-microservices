@@ -1,5 +1,6 @@
 package com.springproject.employeeservice.controller;
 
+import com.springproject.employeeservice.dto.APIResponseDto;
 import com.springproject.employeeservice.dto.EmployeeDto;
 import com.springproject.employeeservice.service.EmployeeService;
 import lombok.AllArgsConstructor;
@@ -20,7 +21,7 @@ public class EmployeeController {
         return new ResponseEntity<>(employeeService.saveEmployee(employeeDto), HttpStatus.CREATED);
     }
     @GetMapping("{employee-id}")
-    public ResponseEntity<EmployeeDto> getEmployeeById(@PathVariable("employee-id") String id){
+    public ResponseEntity<APIResponseDto> getEmployeeById(@PathVariable("employee-id") String id){
         return ResponseEntity.ok(employeeService.getEmployeeById(UUID.fromString(id)));
     }
 }

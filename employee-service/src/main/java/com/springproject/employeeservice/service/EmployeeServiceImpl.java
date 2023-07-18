@@ -1,12 +1,16 @@
 package com.springproject.employeeservice.service;
 
+import com.springproject.employeeservice.dto.APIResponseDto;
+import com.springproject.employeeservice.dto.DepartmentDto;
 import com.springproject.employeeservice.dto.EmployeeDto;
 import com.springproject.employeeservice.entity.Employee;
 import com.springproject.employeeservice.exception.ResourceNotFoundException;
 import com.springproject.employeeservice.mapper.AutoEmployeeMapper;
 import com.springproject.employeeservice.repository.EmployeeRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -14,6 +18,7 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService{
+    private RestTemplate restTemplate;
     private EmployeeRepository employeeRepository;
     @Override
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
@@ -24,8 +29,13 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     @Override
-    public EmployeeDto getEmployeeById(UUID id) {
+    public APIResponseDto getEmployeeById(UUID id) {
         Employee employee=employeeRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Employee","id",String.valueOf(id)));
-        return AutoEmployeeMapper.MAPPER.mapToDto(employee);
+        EmployeeDto employeeDto=AutoEmployeeMapper.MAPPER.mapToDto(employee);
+        ResponseEntity<DepartmentDto> responseEntity=restTemplate.getForEntity("http://localhost:8080/api/departments/code/"+employee.getDepartmentCode(), DepartmentDto.class);
+        DepartmentDto departmentDto=responseEntity.getBody();
+        APIResponseDto apiResponseDto=new APIResponseDto(departmentDto,employeeDto);
+        return apiResponseDto;
+
     }
 }
